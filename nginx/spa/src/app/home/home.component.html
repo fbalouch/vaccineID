@@ -1,0 +1,9 @@
+<mat-card class="card-section" *ngIf="!loginDisplay">
+    <mat-card-title>VaccineID Angular single-page application built with MSAL Angular</mat-card-title>
+    <mat-card-subtitle>Example client for VaccineID API</mat-card-subtitle>
+    <mat-card-content>Sign-in with Azure AD to use VaccineID</mat-card-content>
+</mat-card>
+<mat-card class="card-section" *ngIf="name">
+  <mat-card-title>Welcome {{name}}</mat-card-title>
+  <mat-card-subtitle>You are signed in</mat-card-subtitle>
+</mat-card>

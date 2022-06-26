@@ -1,0 +1,20 @@
+<mat-toolbar color="primary">
+  <a href="/"><img src="../assets/vaccine-id-logo.drawio.png" height="60"></a>
+  <div class="toolbar-spacer"></div>
+  <button mat-raised-button *ngIf="!loginDisplay" (click)="login()">Login</button>
+  <button mat-raised-button color="accent" *ngIf="loginDisplay" (click)="logout()">Logout</button>
+</mat-toolbar>
+<div class="container">
+  <nav *ngIf="loginDisplay">
+    <a routerLink="/add-patient">Add Patient</a>
+    &nbsp;
+    <a routerLink="/search-patient">Search Patients</a>
+  </nav>
+  <p>&nbsp;</p>  
+  <!--This is to avoid reload during acquireTokenSilent() because of hidden iframe -->
+  <router-outlet *ngIf="!isIframe"></router-outlet>
+</div>
+<footer>
+  <mat-toolbar color="primary">
+  </mat-toolbar>
+</footer>

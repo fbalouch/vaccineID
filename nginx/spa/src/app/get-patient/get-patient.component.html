@@ -1,0 +1,101 @@
+<h2>Patient Profile<hr></h2>
+<mat-card class="mat-elevation-z8">
+  <mat-card-content>
+    <div *ngIf="apiResponse">
+      <p><b>ID:</b> {{ apiResponse['id'] }}</p>
+      <p><b>Name:</b> {{ apiResponse['name'] }}</p>
+      <p><b>Surname:</b> {{ apiResponse['surname'] }}</p>
+      <p><b>DOB:</b> {{ apiResponse['dob'] | date }}</p>
+      <p><b>Immunization Records:</b></p>
+
+      <mat-table *ngIf="showRecords" #table [dataSource]="dataSource" class="vaccine-records-table" matSortDisableClear>
+
+        <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.name }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="manufacturer">
+        <mat-header-cell *matHeaderCellDef>Manufacturer</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.manufacturer }}</mat-cell>
+        </ng-container>
+    
+        <ng-container matColumnDef="lot">
+        <mat-header-cell *matHeaderCellDef>Lot</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.lot }}</mat-cell>
+        </ng-container>
+    
+        <ng-container matColumnDef="provider">
+          <mat-header-cell *matHeaderCellDef>Provider</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{ row.provider }}</mat-cell>
+        </ng-container>
+    
+        <ng-container matColumnDef="date">
+        <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.date | date }}</mat-cell>
+        </ng-container>
+    
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+
+      <div *ngIf="showRecords==false">
+
+        <form>
+          <mat-form-field appearance="fill">
+            <mat-label>Name</mat-label>
+            <mat-select [(value)]="recordName.value">
+              <mat-option value="Covid-19">Covid-19</mat-option>
+              <mat-option value="HPV">HPV</mat-option>
+              <mat-option value="MMR">MMR</mat-option>
+              <mat-option value="Monkeypox">Monkeypox</mat-option>
+              <input id="new-record-name" #recordName matInput>
+            </mat-select>
+          </mat-form-field>
+          &nbsp;
+          <mat-form-field appearance="fill">
+            <mat-label>Manufacturer</mat-label>
+            <mat-select [(value)]="recordManufacturer.value">
+              <mat-option value="Janssen">Janssen</mat-option>
+              <mat-option value="Pfizer">Pfizer</mat-option>
+              <mat-option value="Novavax">Novavax</mat-option>
+              <mat-option value="Sanofi">Sanofi</mat-option>
+              <input id="new-record-manufacturer" #recordManufacturer matInput>
+            </mat-select>
+          </mat-form-field>
+          &nbsp;
+          <mat-form-field appearance="fill">
+            <mat-label>Lot</mat-label>
+            <input id="new-record-lot" #recordLot matInput>
+          </mat-form-field> 
+          &nbsp;
+          <mat-form-field appearance="fill">
+            <mat-label>Provider</mat-label>
+            <mat-select [(value)]="recordProvider.value">
+              <mat-option value="CVS">CVS</mat-option>
+              <mat-option value="Rite-Aid">Rite-Aid</mat-option>
+              <mat-option value="Walgreens">Walgreens</mat-option>
+              <mat-option value="Walmart">Walmart</mat-option>
+              <input id="new-record-provider" #recordProvider matInput>
+            </mat-select>
+          </mat-form-field>
+          &nbsp;
+          <mat-form-field appearance="fill">
+            <mat-label>Date</mat-label>
+            <input id="new-record-date" #recordDate matInput [matDatepicker]="picker">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker ></mat-datepicker>
+          </mat-form-field>
+        </form>
+          
+        <p>&nbsp;</p>
+        <button mat-raised-button *ngIf="showRecords==false" class="add-patient-record-button" (click)="addRecord(recordName.value, recordManufacturer.value, recordLot.value, recordProvider.value, recordDate.value); recordName.value=''; recordManufacturer.value=''; recordLot.value=''; recordProvider.value=''; recordDate.value=''; showRecords=true">Add Record</button>
+
+      </div>
+
+      <p>&nbsp;</p>
+      <button mat-raised-button *ngIf="showRecords" class="create-patient-record-button" (click)="createRecord();">New Immunization Record</button>
+    </div>
+
+  </mat-card-content>
+</mat-card>

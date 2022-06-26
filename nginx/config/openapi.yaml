@@ -1,0 +1,318 @@
+# OpenAPI Specificaion https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md
+openapi: 3.0.2
+info:
+  version: '1.0.0'
+  title: VaccineID
+  termsOfService: 'https://vaccine-id.balouchtech.com/tos/'
+  contact:
+    email: support@balouchtech.com
+    url: 'http://vaccine-id.balouchtech.com/contact'
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+  description: VaccineID API
+externalDocs:
+  description: VaccineID on GitHub
+  url: 'https://github.com/'
+tags:
+  - name: Patient
+    description: Patient profile operations
+  - name: Patient Records
+    description: Patient immunization record operations
+servers:
+  - url: 'https://vaccine-id.balouchtech.com/api/v1'
+paths:
+  /patient:
+    get:
+      tags:
+        - Patient
+      summary: Get patient by id
+      description: Get patient profile by id
+      operationId: getPatientById
+      parameters:
+        - name: id
+          in: query
+          description: Patient id
+          schema:
+            type: string
+          required: true
+      security:
+        - jwt: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPatientResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Not Authorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Patient Not Found
+        '500':
+          description: Internal Server Error
+    post:
+      tags:
+        - Patient
+      summary: Add new patient
+      description: Add new patient profile
+      operationId: addPatient
+      security:
+        - jwt: []
+      responses:
+        '200':
+          description: Patient Profile Exists
+        '201':
+          description: Patient Profile Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddPatientResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Not Authorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal Server Error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewPatient'
+        description: Updated user object
+        required: true
+  /patient/search:
+    post:
+      tags:
+        - Patient
+      summary: Search for patients
+      description: Search for patient by surname and date of birth
+      operationId: patientSearch
+      security:
+        - jwt: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchPatientResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Not Authorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal Server Error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchPatient'
+        description: Search payload
+        required: true
+  '/patient/{id}/record':
+    post:
+      tags:
+        - Patient Records
+      summary: Add record
+      description: Add patient immunization record
+      operationId: addPatientRecord
+      parameters:
+        - name: id
+          in: path
+          description: Patient id
+          schema:
+            type: string
+          required: true      
+      security:
+        - jwt: []
+      responses:
+        '201':
+          description: Patient Record Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddPatientRecordResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Not Authorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal Server Error          
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImmunizationRecord'
+        description: Record payload
+        required: true
+components:
+  schemas:
+    NewPatient:
+      type: object
+      properties:
+        name:
+          description: Patient name
+          type: string
+          minLength: 1
+          example: Dwane
+        surname:
+          description: Patient surname
+          type: string
+          minLength: 1
+          example: Lashari
+        dob:
+          description: Patient date of birth
+          type: string
+          format: date
+      required:
+      - name
+      - surname
+      - dob
+    GetPatientResponse:
+      type: object
+      properties:
+        id:
+          description: Patient VaccineID id
+          type: string
+          format: uuid
+          example: 2aa6edb7-a813-4e87-b682-b34935b2d02c
+        name:
+          description: Patient name
+          type: string
+          minLength: 2
+          maxLength: 26
+          example: Dwane
+        surname:
+          description: Patient surname
+          minLength: 2
+          maxLength: 26 
+          example: Lashari
+        dob:
+          description: Patient date of birth
+          type: string
+          format: date
+        immunizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImmunizationRecord'
+    AddPatientResponse:
+      description: Add new patient response
+      type: object
+      properties:
+        id:
+          description: Patient VaccineID id
+          type: string
+          format: uuid
+          example: 2aa6edb7-a813-4e87-b682-b34935b2d02c
+    AddPatientRecordResponse:
+      description: Add new patient record response
+      type: object
+      properties:
+        id:
+          description: Patient VaccineID id
+          type: string
+          format: uuid
+          example: 2aa6edb7-a813-4e87-b682-b34935b2d02c          
+    SearchPatient:
+      description: Search for patient
+      type: object
+      properties:
+        surname:
+          description: Patient surname
+          type: string
+          minLength: 2
+          maxLength: 26
+          example: Lashari
+        dob:
+          description: Patient date of birth
+          type: string
+          format: date
+      required:
+      - surname
+      - dob       
+    SearchPatientResponse:
+      description: Search for patient response
+      type: object
+      properties:
+        patients:
+          description: All patients matching search
+          type: array
+          items:
+            type: object
+            description: Patient profile
+            properties:
+              id:
+                description: Patient VaccineID id
+                type: string
+                format: uuid
+                example: 2aa6edb7-a813-4e87-b682-b34935b2d02c
+              name:
+                description: Patient name
+                type: string
+                minLength: 2
+                maxLength: 26   
+                example: Dwane
+              surname:
+                description: Patient surname
+                type: string
+                minLength: 2
+                maxLength: 26  
+                example: Lashari
+              dob:
+                description: Patient date of birth
+                type: string
+                format: date
+    ImmunizationRecord:
+      description: Patient immunization record
+      type: object
+      properties:
+        name:
+          description: Name of vaccine
+          type: string
+          example: COVID-19
+          minLength: 2
+          maxLength: 26   
+        manufacturer:
+          description: Vaccine manufacturer
+          type: string
+          example: Pfizer-BioNTech
+          minLength: 2
+          maxLength: 26          
+        provider:
+          description: Health care provider
+          type: string
+          example: CVS
+          minLength: 2
+          maxLength: 26
+        date:
+          description: Date of immunization
+          type: string
+          format: date
+        lot:
+          description: Vaccine lot number
+          type: string
+          minLength: 2
+          maxLength: 26
+          example: 762832AE-1
+      required:
+      - name
+      - manufacturer
+      - provider
+      - date
+      - lot
+  securitySchemes:
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

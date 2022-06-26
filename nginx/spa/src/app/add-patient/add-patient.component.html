@@ -1,0 +1,31 @@
+<h2>Add Patient<hr></h2>
+<div>
+  <form>
+      <mat-form-field appearance="fill">
+        <mat-label>Name</mat-label>
+        <input id="new-patient-name" #patientName matInput>
+      </mat-form-field>
+      &nbsp;
+      <mat-form-field appearance="fill">
+        <mat-label>Surname</mat-label>
+        <input id="new-patient-surname" #patientSurname matInput>
+      </mat-form-field>
+      &nbsp;
+      <mat-form-field appearance="fill">
+        <mat-label>Date of Birth</mat-label>
+        <input id="new-patient-db" #patientDOB matInput [matDatepicker]="picker">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker startView="year" [startAt]="startDate"></mat-datepicker>
+      </mat-form-field>
+  </form>
+
+  <button mat-raised-button class="add-button" (click)="addPatient(patientName.value, patientSurname.value, patientDOB.value); patientName.value=''; patientSurname.value=''; patientDOB.value=''">Add Patient</button>
+
+  <div *ngIf="apiResponse">
+    <p>&nbsp;</p>
+    <p>Patient VaccineID Created</p>
+    <p><b>VaccineID:</b> {{apiResponse.id}}</p>
+    <button mat-raised-button class="get-patient-button" (click)="getPatient();">View Patient Profile</button>
+  </div>
+  
+</div>

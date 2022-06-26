@@ -1,0 +1,100 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vaccine-id
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    azure.workload.identity/client-id: "vaccine_id_aad_application_client_id" # Replace with vaccine-id AAD app client id
+  labels:
+    azure.workload.identity/use: "true"
+  name: vaccine-id-sa
+  namespace: vaccine-id
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+  name: vaccine-id-lb
+  namespace: vaccine-id
+spec:
+  ports:
+  - name: lb-ssl
+    port: 8443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    app: vaccine-id-nginx
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: vaccine-id-nginx
+  name: vaccine-id-deploy
+  namespace: vaccine-id
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vaccine-id-nginx
+  template:
+    metadata:
+      annotations:
+        kuma.io/gateway: enabled
+        traffic.sidecar.istio.io/includeInboundPorts: ""
+      labels:
+        app: vaccine-id-nginx
+    spec:
+      securityContext:
+        runAsUser: 65533
+      serviceAccountName: vaccine-id-sa    
+      containers:
+      - name: nginx
+        image: vaccine-id-nginx:v1.0 # VaccineID NGINX Image
+        imagePullPolicy: Always      
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 8443
+            scheme: HTTPS
+          initialDelaySeconds: 5
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 10
+        ports:
+        - containerPort: 8443
+          name: proxy-ssl
+          protocol: TCP
+      - name: api
+        image: vaccine-id-api:v1.0 # VaccineID API Image
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 5000
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 10
+        ports:
+        - containerPort: 5000
+          name: api
+          protocol: TCP
+        env:
+        - name: COSMOS_URL
+          value: "cosmos_db_url" # Replace with Cosmos DB account URL
+        - name: COSMOS_DB
+          value: "cosmos_db_name" # Replace with Cosmos DB name
+        - name: JWT_AUD
+          value: "vaccine_id_api_aad_application_client_id" # Replace with vaccine-id-api AAD app client id
+        - name: TENANT_ID
+          value: "aad_tenant_id" # Replace with AAD Tenant id
