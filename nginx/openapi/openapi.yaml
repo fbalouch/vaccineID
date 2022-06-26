@@ -3,9 +3,6 @@ openapi: 3.0.2
 info:
   version: '1.0.0'
   title: VaccineID
-  contact:
-    email: support@balouchtech.com
-    url: 'http://vaccine-id.balouchtech.com/contact'
   license:
     name: MIT
     url: 'https://github.com/fbalouch/vaccineID/blob/main/LICENSE'
