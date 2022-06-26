@@ -190,5 +190,3 @@ or download and extract the repository .zip file.
 5. Select **Properties** on left and then set **Assignment required?** to `Yes`. This will require users be assigned this app in order to get access.
 6. Select **Users and groups** then **Add user/group**.
 7. Select and add your new or invited user.
-
-### Step 2. Login to VaccineID as user and test
