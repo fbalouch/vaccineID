@@ -4,7 +4,7 @@ info:
   version: '1.0.0'
   title: VaccineID
   license:
-    name: MIT
+    name: MIT License
     url: 'https://github.com/fbalouch/vaccineID/blob/main/LICENSE'
   description: VaccineID API
 externalDocs:
