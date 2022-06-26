@@ -1,4 +1,4 @@
-# Vaccine credentials for all! An example of a cloud-native microservice built with Angular, Azure, Docker, "Distroless" Container Images, Flask, Gunicorn, Kubernetes, Nginx, OpenAPI, and Python.
+# Vaccine credentials for all! An example of a cloud-native microservice built with Angular, Azure, Docker, "Distroless" Container Images, Flask, Gunicorn, Kubernetes, MSAL, Nginx, OpenAPI, and Python.
 
  1. [Overview](#overview)
  2. [Contents](#contents)
@@ -9,7 +9,7 @@
 
 ## Overview
 
-VaccineID is a demonstration of Microsoft Identity platform, using Azure Active Directory (AAD) for authentication and authorization, AAD workload identity federation with Kuberentes, Cosmos DB role based access using AAD, and Microsoft Authentication Library (MSAL) for Angular and Python.
+VaccineID is a demonstration of Microsoft Identity platform, using Azure Active Directory (AAD) for authentication and authorization, AAD workload identity federation with Kubernetes, Cosmos DB role based access using AAD, and Microsoft Authentication Library (MSAL) for Angular and Python.
 
 ![VaccineID](./img/vaccineID.png)
 
@@ -37,7 +37,7 @@ The following files contain configuration parameters required to deploy VaccineI
 1. Navigate to the [Azure portal](https://portal.azure.com) and select **Azure Cosmos DB** service.
 2. Create a new Azure Cosmos account, or select an existing account for Core (SQL).
 3. Open the **Data Explorer** pane, and select **New Container**. Next, provide the following details:
-   - Use `vaccine-id` as the Databse id.
+   - Use `vaccine-id` as the Database id.
    - Use `patients` as the Container id.
    - Use `id` as the Partition key value.
 4. Select **OK** to create the Container.
@@ -51,35 +51,40 @@ The following files contain configuration parameters required to deploy VaccineI
    - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `vaccine-id`.
    - Under **Supported account types**, select **Accounts in this organizational directory only**.
 5. Select **Register** to create the application.
-6. In the app's registration screen, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later.
-7. Select **Save** to save your changes.
-8. Establish federated identity credential between the AAD application and the service account issuer & subject
+6. In the app's registration screen, find and note the **Application (client) ID** and **Object ID**. You will need these for later steps.
+7. Establish federated identity credential between the AAD application and a Kubernetes service account. See [Workload Identity](https://azure.github.io/azure-workload-identity/docs/quick-start.html) for details.
 ```console
    cat <<EOF > body.json
    {
    "name": "kubernetes-federated-credential",
-   "issuer": "${SERVICE_ACCOUNT_ISSUER}",
-   "subject": "system:serviceaccount:${SERVICE_ACCOUNT_NAMESPACE}:${SERVICE_ACCOUNT_NAME}",
-   "description": "Kubernetes service account federated credential",
+   "issuer": "<K8S_OIDC_ISSUER_URL>",
+   "subject": "system:serviceaccount:vaccine-id:vaccine-id-svc",
+   "description": "Kubernetes service account federated credential for vaccine-id-svc in vaccine-id namespace.",
    "audiences": [
       "api://AzureADTokenExchange"
    ]
    }
    EOF
 
-   az rest --method POST --uri "https://graph.microsoft.com/beta/applications/${APPLICATION_OBJECT_ID}/federatedIdentityCredentials" --body @body.json
+   az rest --method POST --uri "https://graph.microsoft.com/beta/applications/<APPLICATION_OBJECT_ID>/federatedIdentityCredentials" --body @body.json
 ```
 
 ### Step 3. Setup Cosmos DB Role based access control
 
-1. Create a custome role defination or use a bult-in role. See [How to Setup RBAC](https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-setup-rbac).
-2. Assign role defination to K8s client app, created in step 2.
+1. Create a custom role definition or use the `Cosmos DB Built-in Data Contributor` role. See [How to Setup RBAC](https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-setup-rbac) for more details. Following data actions are required for the role:
+```
+    Microsoft.DocumentDB/databaseAccounts/readMetadata
+    Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/items/*
+    Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/*
+```
+2. Assign role definition to K8s client app (vaccine-id), created in step 2. Make sure to use the AAD application Object ID as found in the Enterprise applications for the 'principalId'.
 ```console
-   resourceGroupName='<myResourceGroup>'
-   accountName='<myCosmosAccount>'
-   readOnlyRoleDefinitionId = '<roleDefinitionId>' # as fetched above
+   resourceGroupName='<ResourceGroup>'
+   accountName='<CosmosAccount>'
+   RoleDefinitionId = '<roleDefinitionId>'
    principalId = '<aadPrincipalId>'
-   az cosmosdb sql role assignment create --account-name $accountName --resource-group $resourceGroupName --scope "/" --principal-id $principalId --role-definition-id $readOnlyRoleDefinitionId
+
+   az cosmosdb sql role assignment create --account-name $accountName --resource-group $resourceGroupName --scope "/" --principal-id $principalId --role-definition-id $RoleDefinitionId
 ```
 
 ### Step 4. Register AAD application for the API (vaccine-id-api)
@@ -91,13 +96,10 @@ The following files contain configuration parameters required to deploy VaccineI
    - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `vaccine-id-api`.
    - Under **Supported account types**, select **Accounts in this organizational directory only**.
 4. Select **Register** to create the application.
-5. In the app's registration screen, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later.
-6. Select **Save** to save your changes.
-7. In the app's registration screen, click on the **Expose an API**  to the left to open the page where you can declare the parameters to expose this app as an API for which client applications can obtain [access tokens](https://docs.microsoft.com/azure/active-directory/develop/access-tokens) for.
-The first thing that we need to do is to declare the unique [resource](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow) URI that the clients will be using to obtain access tokens for this API. To declare an resource URI, follow the following steps:
+5. In the app's registration screen, click on the **Expose an API** to the left to open the page where you can declare the parameters to expose this app as an API for which client applications can obtain [access tokens](https://docs.microsoft.com/azure/active-directory/develop/access-tokens) for. The first thing that we need to do is to declare a unique [resource](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow) URI that the clients will be using to obtain access tokens for this API. To declare an resource URI, follow the following steps:
    - Click `Set` next to the **Application ID URI** to generate a URI that is unique for this app.
-   - For this sample, accept the proposed Application ID URI (api://{clientId}) by selecting **Save**.
-8. All APIs have to publish a minimum of one [scope](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code) for the client's to obtain an access token successfully. To publish a scope, follow the following steps:
+   - Accept the proposed Application ID URI (api://{clientId}) by selecting **Save**.
+6. All APIs have to publish a minimum of one [scope](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code) for the clients to obtain an access token successfully. To publish a scope, follow steps:
    - Select **Add a scope** button to open the **Add a scope** screen and enter the values as indicated below:
       - For **Scope name**, use `Patients.Admin`.
       - Select **Admins and users** options for **Who can consent?**
@@ -107,9 +109,9 @@ The first thing that we need to do is to declare the unique [resource](https://d
       - For **User consent description** type `Allow the application to access vaccine-id-api on your behalf.`
       - Keep **State** as **Enabled**
       - Click on the **Add scope** button on the bottom to save this scope.
-9. On the left side menu, select the **Manifest**.
+7. On the left side menu, select the **Manifest**.
    - Set `accessTokenAcceptedVersion` property to `2`
-10. Click on **Save**.
+8.  Click on **Save**.
 
 ### Step 4. Register AAD application for the Angular client app (vaccine-id-spa)
 
@@ -121,7 +123,7 @@ The first thing that we need to do is to declare the unique [resource](https://d
    - Under **Supported account types**, select **Accounts in this organizational directory only**.
    - In the **Redirect URI (optional)** section, select **Single-page application** in the combo-box and enter your apps URI, for example: `https://vaccine-id.example.com:8443/`.
 4. Select **Register** to create the application.
-5. In the app's registration screen, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
+5. In the app's registration screen, find and note the **Application (client) ID**. You will need this in step 2 of deploying.
 6. In the app's registration screen, click on the **API permissions** in the left to open the page where we add access to the APIs that your application needs.
    - Click the **Add a permission** button and then,
    - Ensure that the **My APIs** tab is selected.
@@ -160,7 +162,7 @@ or download and extract the repository .zip file.
     docker build -t vaccine-id-api:v1.0 .
 ```
 
-### Step 5. Tag and push images to your image repository, should accessible by Kubernetes nodes.
+### Step 5. Tag and push images to your image repository, accessible by Kubernetes nodes.
 
 ### Step 6. Update Kubernetes manifest (vaccine-id.yaml), replace following with your details.
 ```console
@@ -184,9 +186,9 @@ or download and extract the repository .zip file.
 1. Navigate to the [Azure portal](https://portal.azure.com) and select **Azure Active Directory** service.
 1. Select **Users**.
 2. Select **New user** and then either **Create new user** or **Invite external user**.
-3. Once user is created, navigate to back **Azure Active Directory** service.
+3. Once user is created, navigate back to **Azure Active Directory** service.
 4. Select **Enterprise applications** then find and select your AAD application (vaccine-id-api).
-5. Select **Properties** on left and then set **Assignment required?** to `Yes`. This will require users be assigned the app to get access.
+5. Select **Properties** on left and then set **Assignment required?** to `Yes`. This will require users be assigned the app in order to get access.
 6. Select **Users and groups** then **Add user/group**.
 7. Select and add your new or invited user.
 
