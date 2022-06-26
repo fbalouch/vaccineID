@@ -42,8 +42,8 @@
  export const protectedResources = {
     vaccineId: {
         endpoint: "/api/v1/",
-        scopes: ["vaccine_id_api_scope"], //  Vaccine ID API scope as 'api://<aad_app_id>'
-    }    
+        scopes: ["vaccine_id_api_scope"], //  Vaccine ID API scope as 'api://<aad_app_id>/VaccineID.Admin'
+    }
 }
 
 /**
