@@ -56,7 +56,7 @@ def patient():
                         app.logger.error(f'error getting patient from db - {e}')
                         return 'Internal Server Error', 500
 
-                # Requesting missing id param
+                # Request missing id param
                 else:
                     return 'Bad Request - Missing id', 400
     
@@ -281,6 +281,7 @@ def db_client(containerName):
     # https://docs.microsoft.com/en-us/azure/active-directory/develop/workload-identity-federation
     tokenCredential = ClientAssertionCredential(azureClientId, azureTenantId,
         azureAuthorityHost, azureFederatedTokenFile)
+
     # Init and return Cosmos client
     client = CosmosClient(cosmosURL, tokenCredential)
     database = client.get_database_client(databaseName)
