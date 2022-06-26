@@ -1,19 +1,18 @@
-# OpenAPI Specificaion https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md
+# OpenAPI Specification https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md
 openapi: 3.0.2
 info:
   version: '1.0.0'
   title: VaccineID
-  termsOfService: 'https://vaccine-id.balouchtech.com/tos/'
   contact:
     email: support@balouchtech.com
     url: 'http://vaccine-id.balouchtech.com/contact'
   license:
-    name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    name: MIT
+    url: 'https://github.com/fbalouch/vaccineID/blob/main/LICENSE'
   description: VaccineID API
 externalDocs:
   description: VaccineID on GitHub
-  url: 'https://github.com/'
+  url: 'https://github.com/fbalouch/vaccineID'
 tags:
   - name: Patient
     description: Patient profile operations

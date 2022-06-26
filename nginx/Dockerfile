@@ -13,8 +13,8 @@ FROM nginx:1.21.6 as base
 COPY --from=build /usr/local/vaccine-id/dist/vaccine-id /usr/share/nginx/html
 
 # Copy openapi spec
-COPY config/spec.html /usr/share/nginx/html
-COPY config/openapi.yaml /usr/share/nginx/html
+COPY openapi/spec.html /usr/share/nginx/html
+COPY openapi/openapi.yaml /usr/share/nginx/html
 
 # Copy nginx conf
 COPY config/nginx.conf /etc/nginx/conf.d/default.conf
