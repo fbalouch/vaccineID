@@ -1,4 +1,4 @@
-# Vaccine credentials for all! An example of a cloud-native microservice built with Angular, Azure, Docker, "Distroless" Container Images, Flask, Gunicorn, Kubernetes, MSAL, Nginx, OpenAPI, and Python.
+# Vaccine credentials for all! An example of a cloud-native microservice built with Angular, Azure, Docker, "Distroless" Container Images, Flask, Gunicorn, Kubernetes, Nginx, OpenAPI, and Python.
 
  1. [Overview](#overview)
  2. [Contents](#contents)
@@ -9,7 +9,7 @@
 
 ## Overview
 
-VaccineID is a demonstration of Microsoft Identity platform, using Azure Active Directory (AAD) for authentication and authorization, AAD workload identity federation with Kubernetes, Cosmos DB role based access using AAD, and Microsoft Authentication Library (MSAL) for Angular and Python.
+VaccineID is a demonstration of Microsoft Identity platform, using Azure Active Directory (AAD) for authentication and authorization, AAD workload identity federation with Kubernetes, Cosmos DB role based access using AAD, and Microsoft Authentication Library (MSAL) for Angular and Python. Project includes an OpenAPI specification, a Python implementation of the API, Kubernetes deployment, and a front-end Angular single page application. VaccineID allows a health care provider to quickly integrate digital immunization records for their patients.
 
 ![VaccineID](./img/vaccineID.png)
 
@@ -19,10 +19,10 @@ VaccineID is a demonstration of Microsoft Identity platform, using Azure Active 
 
 The following files contain configuration parameters required to deploy VaccineID in your environment.
 
-| File/folder                         | Description                                  |
+| Directory/file                      | Description                                  |
 |-------------------------------------|----------------------------------------------|
 | `nginx/spa/src/app/auth-config.ts`  | AAD parameters for Angular SPA client.       |
-| `k8s/vaccine-id.yaml`               | AAD parameters for Kubernetes app.           |
+| `k8s/vaccine-id.yaml`               | AAD and app parameters for Kubernetes app.   |
 
 ## Prerequisites
 
@@ -51,7 +51,7 @@ The following files contain configuration parameters required to deploy VaccineI
    - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `vaccine-id`.
    - Under **Supported account types**, select **Accounts in this organizational directory only**.
 5. Select **Register** to create the application.
-6. In the app's registration screen, find and note the **Application (client) ID** and **Object ID**. You will need these for later steps.
+6. In the app's registration screen, find and note the **Application (client) ID** and **Object ID**. You will need these in later steps.
 7. Establish federated identity credential between the AAD application and a Kubernetes service account. See [Workload Identity](https://azure.github.io/azure-workload-identity/docs/quick-start.html) for details.
 ```console
    cat <<EOF > body.json
@@ -125,11 +125,10 @@ The following files contain configuration parameters required to deploy VaccineI
 4. Select **Register** to create the application.
 5. In the app's registration screen, find and note the **Application (client) ID**. You will need this in step 2 of deploying.
 6. In the app's registration screen, click on the **API permissions** in the left to open the page where we add access to the APIs that your application needs.
-   - Click the **Add a permission** button and then,
-   - Ensure that the **My APIs** tab is selected.
+   - Click **Add a permission** button and then ensure that the **My APIs** tab is selected.
    - In the list of APIs, select the API `vaccine-id-api`.
    - In the **Delegated permissions** section, select the **Patients.Admin** in the list. Use the search box if necessary.
-   - Click on the **Add permissions** button at the bottom.
+   - Click **Add permissions** button at the bottom.
 
 ## Deploy 
 
@@ -164,7 +163,7 @@ or download and extract the repository .zip file.
 
 ### Step 5. Tag and push images to your image repository, accessible by Kubernetes nodes.
 
-### Step 6. Update Kubernetes manifest (vaccine-id.yaml), replace following with your details.
+### Step 6. Update Kubernetes manifest (vaccine-id.yaml), replace image URLS and following with your details.
 ```console
    aad_tenant_id
    cosmos_db_name
@@ -187,8 +186,8 @@ or download and extract the repository .zip file.
 1. Select **Users**.
 2. Select **New user** and then either **Create new user** or **Invite external user**.
 3. Once user is created, navigate back to **Azure Active Directory** service.
-4. Select **Enterprise applications** then find and select your AAD application (vaccine-id-api).
-5. Select **Properties** on left and then set **Assignment required?** to `Yes`. This will require users be assigned the app in order to get access.
+4. Select **Enterprise applications** then find and select the AAD application for the API (vaccine-id-api).
+5. Select **Properties** on left and then set **Assignment required?** to `Yes`. This will require users be assigned this app in order to get access.
 6. Select **Users and groups** then **Add user/group**.
 7. Select and add your new or invited user.
 
