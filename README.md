@@ -77,7 +77,7 @@ The following files contain configuration parameters required to deploy VaccineI
     Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/items/*
     Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/*
 ```
-2. Assign role definition to K8s client app (vaccine-id), created in step 2. Make sure to use the AAD application Object ID as found in the Enterprise applications for the 'principalId'.
+2. Assign role definition to K8s client app (vaccine-id), created in setup step 2. Make sure to use the AAD application **Object ID** as found in the Enterprise applications for the principal.
 ```console
    resourceGroupName='<ResourceGroup>'
    accountName='<CosmosAccount>'
@@ -96,7 +96,7 @@ The following files contain configuration parameters required to deploy VaccineI
    - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `vaccine-id-api`.
    - Under **Supported account types**, select **Accounts in this organizational directory only**.
 4. Select **Register** to create the application.
-5. In the app's registration screen, click on the **Expose an API** to the left to open the page where you can declare the parameters to expose this app as an API for which client applications can obtain [access tokens](https://docs.microsoft.com/azure/active-directory/develop/access-tokens) for. The first thing that we need to do is to declare a unique [resource](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow) URI that the clients will be using to obtain access tokens for this API. To declare an resource URI, follow the following steps:
+5. In the app's registration screen, click on **Expose an API** to the left to open the page where you can declare the parameters to expose this app as an API for which client applications can obtain [access tokens](https://docs.microsoft.com/azure/active-directory/develop/access-tokens) for. The first thing that we need to do is to declare a unique [resource](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow) URI that the clients will be using to obtain access tokens for this API. To declare a resource URI, follow the following steps:
    - Click `Set` next to the **Application ID URI** to generate a URI that is unique for this app.
    - Accept the proposed Application ID URI (api://{clientId}) by selecting **Save**.
 6. All APIs have to publish a minimum of one [scope](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code) for the clients to obtain an access token successfully. To publish a scope, follow steps:
@@ -163,7 +163,7 @@ or download and extract the repository .zip file.
 
 ### Step 5. Tag and push images to your image repository, accessible by Kubernetes nodes.
 
-### Step 6. Update Kubernetes manifest (vaccine-id.yaml), replace image URLS and following with your details.
+### Step 6. Update Kubernetes manifest (vaccine-id.yaml), replace image URLs and following with your details.
 ```console
    aad_tenant_id
    cosmos_db_name
