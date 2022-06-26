@@ -9,7 +9,7 @@
 
 ## Overview
 
-VaccineID demonstrates an example application built with Microsoft Identity platform, using Azure Active Directory (AAD) for authentication and authorization, AAD workload identity federation with Kubernetes, Azure Cosmos DB role based access using AAD, and Microsoft Authentication Library (MSAL) for Angular and Python. Project includes an OpenAPI specification, a Python implementation of the API, Kubernetes deployment, and a front-end Angular single page application. VaccineID allows healthcare providers to quickly integrate digital immunization records for their patients.
+VaccineID demonstrates an example application built with Microsoft Identity platform, using Azure Active Directory (AAD) for authentication and authorization, AAD workload identity federation with Kubernetes, Azure Cosmos DB role based access using AAD, and Microsoft Authentication Library (MSAL) for Angular and Python. Project includes an OpenAPI specification, a Python implementation of the API, Kubernetes deployment, and a front-end Angular single page application. VaccineID allows healthcare providers to quickly and securely integrate digital immunization credentials for their patients.
 
 ![VaccineID](./img/vaccineID.png)
 
