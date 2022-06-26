@@ -58,8 +58,8 @@ The following files contain configuration parameters required to deploy VaccineI
    {
    "name": "kubernetes-federated-credential",
    "issuer": "<K8S_OIDC_ISSUER_URL>",
-   "subject": "system:serviceaccount:vaccine-id:vaccine-id-svc",
-   "description": "Kubernetes service account federated credential for vaccine-id-svc in vaccine-id namespace.",
+   "subject": "system:serviceaccount:vaccine-id:vaccine-id-sa",
+   "description": "Kubernetes service account federated credential for vaccine-id-sa service account in vaccine-id namespace.",
    "audiences": [
       "api://AzureADTokenExchange"
    ]
