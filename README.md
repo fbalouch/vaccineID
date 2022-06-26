@@ -1,4 +1,4 @@
-# Vaccine credentials for all! An example of a cloud-native microservice built with Angular, Azure, Docker, "Distroless" Container Images, Flask, Gunicorn, Kubernetes, Nginx, OpenAPI, and Python.
+# Vaccine credentials for all! An example of a cloud-native microservice built with Angular, Azure, Docker, "Distroless" container images, Flask, Gunicorn, Kubernetes, Nginx, OpenAPI, and Python.
 
  1. [Overview](#overview)
  2. [Contents](#contents)
@@ -9,7 +9,7 @@
 
 ## Overview
 
-VaccineID is a demonstration of Microsoft Identity platform, using Azure Active Directory (AAD) for authentication and authorization, AAD workload identity federation with Kubernetes, Cosmos DB role based access using AAD, and Microsoft Authentication Library (MSAL) for Angular and Python. Project includes an OpenAPI specification, a Python implementation of the API, Kubernetes deployment, and a front-end Angular single page application. VaccineID allows a health care provider to quickly integrate digital immunization records for their patients.
+VaccineID demonstrates an example application built with Microsoft Identity platform, using Azure Active Directory (AAD) for authentication and authorization, AAD workload identity federation with Kubernetes, Azure Cosmos DB role based access using AAD, and Microsoft Authentication Library (MSAL) for Angular and Python. Project includes an OpenAPI specification, a Python implementation of the API, Kubernetes deployment, and a front-end Angular single page application. VaccineID allows healthcare providers to quickly integrate digital immunization records for their patients.
 
 ![VaccineID](./img/vaccineID.png)
 
