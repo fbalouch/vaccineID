@@ -1,4 +1,4 @@
-# Vaccine credentials for all! An example of a cloud-native microservice built with Angular, Azure, Docker, "Distroless" container images, Flask, Gunicorn, Kubernetes, Nginx, OpenAPI, and Python.
+# Vaccine credentials for all! An example of a cloud-native micro-service built with Angular, Azure, Docker, "Distroless" container images, Flask, Gunicorn, Kubernetes, Nginx, OpenAPI, and Python.
 
  1. [Overview](#overview)
  2. [Contents](#contents)
@@ -9,7 +9,7 @@
 
 ## Overview
 
-VaccineID demonstrates an example application built with Microsoft Identity platform, using Azure Active Directory (AAD) for authentication and authorization, AAD workload identity federation with Kubernetes, Azure Cosmos DB role based access using AAD, and Microsoft Authentication Library (MSAL) for Angular and Python. Project includes an OpenAPI specification, a Python implementation of the API, Kubernetes deployment, and a front-end Angular single page application. VaccineID allows healthcare providers to quickly and securely integrate digital immunization credentials for their patients.
+VaccineID demonstrates an example application built with Microsoft Identity platform, using Azure Active Directory (AAD) for authentication and authorization, AAD workload identity federation for Kubernetes, Azure Cosmos DB role based access using AAD, and Microsoft Authentication Library (MSAL) for Angular and Python. This project includes an OpenAPI specification, a Python implementation of the API, Kubernetes deployment with "distroless" container images, and a front-end Angular single page application. VaccineID allows healthcare providers to quickly and securely integrate digital immunization credentials for their patients.
 
 ![VaccineID](./img/vaccineID.png)
 
@@ -35,7 +35,7 @@ The following files contain configuration parameters required to deploy VaccineI
 ### Step 1. Create a Cosmos DB Container
 
 1. Navigate to the [Azure portal](https://portal.azure.com) and select **Azure Cosmos DB** service.
-2. Create a new Azure Cosmos account, or select an existing account for Core (SQL).
+2. Create a new Azure Cosmos account, or select an existing account for **Core (SQL)**.
 3. Open the **Data Explorer** pane, and select **New Container**. Next, provide the following details:
    - Use `vaccine-id` as the Database id.
    - Use `patients` as the Container id.
@@ -77,7 +77,7 @@ The following files contain configuration parameters required to deploy VaccineI
     Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/items/*
     Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/*
 ```
-2. Assign role definition to K8s client app (vaccine-id), created in setup step 2. Make sure to use the AAD application **Object ID** as found in the Enterprise applications for the principal.
+1. Assign role definition to K8s client app (vaccine-id), created in setup step 2. Make sure to use the AAD application **Object ID** as found in the Enterprise applications for principal id.
 ```console
    resourceGroupName='<ResourceGroup>'
    accountName='<CosmosAccount>'
@@ -129,6 +129,7 @@ The following files contain configuration parameters required to deploy VaccineI
    - In the list of APIs, select the API `vaccine-id-api`.
    - In the **Delegated permissions** section, select the **Patients.Admin** in the list. Use the search box if necessary.
    - Click **Add permissions** button at the bottom.
+7. Optionally, click **Grant admin consent for...** to pre-grant users in your directory to use the app. Otherwise this consent will be needed on first login to app.
 
 ## Deploy 
 
