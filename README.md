@@ -1,4 +1,4 @@
-# Vaccine credentials for all! An example of a cloud-native micro-service built with Angular, Azure, Docker, "Distroless" container images, Flask, Gunicorn, Kubernetes, Nginx, OpenAPI, and Python.
+# Vaccine credentials for all! An example of a cloud native microservice built with Angular, Azure, Docker, "Distroless" container images, Flask, Gunicorn, Kubernetes, Nginx, OpenAPI, and Python.
 
  1. [Overview](#overview)
  2. [Contents](#contents)
