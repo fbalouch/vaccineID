@@ -79,7 +79,7 @@ The following files contain configuration parameters required to deploy VaccineI
     Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/items/*
     Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/*
 ```
-1. Assign role definition to K8s client app (vaccine-id), created in setup step 2. Make sure to use the AAD application **Object ID** as found in the Enterprise applications for principal id.
+2. Assign role definition to K8s client app (vaccine-id), created in setup step 2. Make sure to use the AAD application **Object ID** as found in the Enterprise applications for principal id.
 ```console
    resourceGroupName='<ResourceGroup>'
    accountName='<CosmosAccount>'
