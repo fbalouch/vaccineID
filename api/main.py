@@ -8,9 +8,9 @@ from uuid import uuid4
 from jwt import PyJWKClient, decode, exceptions as jwtExcp
 
 # Scope required by API
-SCOPE_REQUIED_BY_API = 'VaccineID.Admin'
+SCOPE_REQUIRED_BY_API = 'VaccineID.Admin'
 
-# Initilize as Flask app
+# Init as Flask app
 global app
 app = Flask(__name__)
 
@@ -304,7 +304,7 @@ def valid_jwt(token):
             options={"require": ["aud", "exp", "iss", "scp"], "verify_exp": True, "verify_iat": True, 
                 "verify_nbf": True, "verify_iss": True, "verify_aud": True })
         if decodeJwt:
-            if decodeJwt['scp'] == SCOPE_REQUIED_BY_API:
+            if decodeJwt['scp'] == SCOPE_REQUIRED_BY_API:
                 app.logger.info('got valid jwt and scope match')
                 return True
     except jwtExcp as e:
@@ -313,6 +313,6 @@ def valid_jwt(token):
 
 if __name__ != '__main__':
     # Set Gunicorn as log handler
-    gunicorn_logger = getLogger('gunicorn.error')
-    app.logger.handlers = gunicorn_logger.handlers
-    app.logger.setLevel(gunicorn_logger.level)
+    gunicornLogger = getLogger('gunicorn.error')
+    app.logger.handlers = gunicornLogger.handlers
+    app.logger.setLevel(gunicornLogger.level)
