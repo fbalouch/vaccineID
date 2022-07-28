@@ -15,8 +15,6 @@ VaccineID demonstrates an example application built with Microsoft Identity plat
 
 ![Topology](./img/vaccineID-topology.png)
 
-## [OpenAPI Spec](https://vaccine-id.balouchtech.com/spec.html)
-
 ## Contents
 
 The following files contain configuration parameters required to deploy VaccineID in your environment.
